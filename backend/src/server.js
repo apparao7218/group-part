@@ -16,7 +16,7 @@ if (!fs.existsSync(uploadDir)) {
 
 
 const excelRoute = require('./routes/excelRoute');
-
+const processRoute = require('./routes/processRoute');
 
 app.use(cors());
 app.use(express.json());
@@ -29,6 +29,8 @@ connectDB()
   .catch(err => console.error('MongoDB connection error:', err.message));
 
   app.use('/api/excel-upload', excelRoute);
+  app.use('/api/excel-process', processRoute);
+
 
 
 const PORT = process.env.PORT || 3001;
