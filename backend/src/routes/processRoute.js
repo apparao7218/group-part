@@ -11,13 +11,10 @@ router.post('/', async (req, res) => {
 
         const data = excelSheet.data;
 
-        console.log('Raw data from Excel sheet:', data);
-
         if (!Array.isArray(data) || data.length === 0) {
             return res.status(400).send('No data found in the Excel sheet.');
         }
 
-       
         const validRows = data.slice(1).filter(row => {
             const sno = row.columns.get('column1');
             const name = row.columns.get('column4');
@@ -27,16 +24,18 @@ router.post('/', async (req, res) => {
             name: row.columns.get('column4')
         }));
 
-        console.log('Filtered valid rows with SNO and Name:', validRows);
-
         const groups = [];
         for (let i = 0; i < validRows.length; i += 4) {
             const group = validRows.slice(i, i + 4);
             groups.push(group);
-            console.log(`Group ${Math.floor(i / 4) + 1}:`, group); 
         }
 
-        console.log('Grouped data:', groups);
+        // Check if there are any remaining students that did not fit into a complete group of 4
+        const remainder = validRows.length % 4;
+        if (remainder > 0) {
+            const lastGroup = validRows.slice(-remainder);
+            groups.push(lastGroup);
+        }
 
         res.status(200).json(groups);
     } catch (error) {

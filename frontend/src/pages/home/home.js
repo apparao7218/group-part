@@ -105,7 +105,7 @@ const Home = () => {
                                                     <TableBody>
                                                         {group.map((row, rowIndex) => (
                                                             <TableRow key={rowIndex} sx={{ backgroundColor: rowIndex % 2 === 0 ? '#f5f5f5' : '#ffffff' }}>
-                                                                <TableCell>{row.sno}</TableCell>
+                                                                <TableCell>{rowIndex +1}</TableCell>
                                                                 <TableCell>{row.name}</TableCell>
                                                             </TableRow>
                                                         ))}
