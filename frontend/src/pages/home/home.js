@@ -4,6 +4,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import instructionPng from '../../assets/instructions.png';
 
 const Home = () => {
     const [file, setFile] = useState(null);
@@ -12,6 +13,7 @@ const Home = () => {
     const [fileError, setFileError] = useState('');
     const [groupSizeError, setGroupSizeError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isFileUploaded, setIsFileUploaded] = useState(false);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -53,6 +55,7 @@ const Home = () => {
 
             const processResponse = await axios.post('http://localhost:3001/api/excel-process', { groupSize });
             setGroups(processResponse.data);
+            setIsFileUploaded(true); // Set to true after successful upload
 
         } catch (error) {
             console.error('Error uploading or processing file:', error);
@@ -69,9 +72,11 @@ const Home = () => {
         doc.text('Grouped Data', 14, 16);
 
         // Table header
-        const headers = ['Group', 'S.NO', 'STUDNAME', 'CGPA'];
+        const headers = ['S.NO', 'STUDENT ID', 'STUDNAME', 'CGPA'];
 
         let yOffset = 30; // Initial vertical position
+        let sequentialNumber = 1; // Initialize sequential number
+
         groups.forEach((group, index) => {
             // Group title
             doc.setFontSize(14);
@@ -79,7 +84,7 @@ const Home = () => {
             yOffset += 10;
 
             // Table content
-            const data = group.map(member => [index + 1, member.sno, member.name, member.cgpa]);
+            const data = group.map(member => [sequentialNumber++, member.studentId, member.name, member.cgpa]);
 
             doc.autoTable({
                 head: [headers],
@@ -124,36 +129,51 @@ const Home = () => {
                 <Typography variant="h4" component="h1" gutterBottom>
                     Upload Excel File
                 </Typography>
-                <Box display="flex" flexDirection='row' alignItems="center" sx={{ gap: 1 }}>
-                    <TextField
-                        required
-                        type="file"
-                        onChange={handleFileChange}
-                        inputProps={{ accept: '.xlsx, .xls' }}
-                        variant="outlined"
-                        error={!!fileError}
-                        helperText={fileError}
-                    />
-                    <TextField
-                        label="Enter the group size"
-                        type="number"
-                        value={groupSize}
-                        onChange={handleGroupSizeChange}
-                        variant="outlined"
-                        inputProps={{ min: 1 }}
-                        sx={{ marginLeft: 2 }}
-                        error={!!groupSizeError}
-                        helperText={groupSizeError}
-                    />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<UploadFileIcon />}
-                        onClick={handleUpload}
-                        sx={{ marginLeft: 2 }}
-                    >
-                        Upload
-                    </Button>
+                <Box display="flex" flexDirection='column' alignItems="center" sx={{ gap: 2 }}>
+                    <Box display="flex" flexDirection='row' alignItems="center" sx={{ gap: 1 }}>
+                        <TextField
+                            required
+                            type="file"
+                            onChange={handleFileChange}
+                            inputProps={{ accept: '.xlsx, .xls' }}
+                            variant="outlined"
+                            error={!!fileError}
+                            helperText={fileError}
+                        />
+                        <TextField
+                            label="Enter the group size"
+                            type="number"
+                            value={groupSize}
+                            onChange={handleGroupSizeChange}
+                            variant="outlined"
+                            inputProps={{ min: 1 }}
+                            sx={{ marginLeft: 2 }}
+                            error={!!groupSizeError}
+                            helperText={groupSizeError}
+                        />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<UploadFileIcon />}
+                            onClick={handleUpload}
+                            sx={{ marginLeft: 2 }}
+                        >
+                            Upload
+                        </Button>
+                    </Box>
+                    {!isFileUploaded && (
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            alignItems="center"
+                            sx={{ width: '100%', marginTop: 2 }}
+                        >
+                            <Typography variant="body1" color='red' sx={{ mb: 2 }}>
+                                Please upload an Excel file with the following format to get group data:
+                            </Typography>
+                            <img src={instructionPng} alt="instructions" width='90%' height='auto' />
+                        </Box>
+                    )}
                 </Box>
             </Box>
             <Box
@@ -184,9 +204,9 @@ const Home = () => {
                                                     <Table>
                                                         <TableHead sx={{ backgroundColor: '#1976d2', color: '#ffffff' }}>
                                                             <TableRow>
-                                                                <TableCell sx={{ color: '#ffffff' }}>S.NO</TableCell>
-                                                                <TableCell sx={{ color: '#ffffff' }}>O.NO</TableCell>
-                                                                <TableCell sx={{ color: '#ffffff' }}>STUDNAME</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff' }}>S.No</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff' }}>Id</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff' }}>Name</TableCell>
                                                                 <TableCell sx={{ color: '#ffffff' }}>CGPA</TableCell>
                                                             </TableRow>
                                                         </TableHead>
@@ -194,7 +214,7 @@ const Home = () => {
                                                             {group.map((row, rowIndex) => (
                                                                 <TableRow key={rowIndex} sx={{ backgroundColor: rowIndex % 2 === 0 ? '#f5f5f5' : '#ffffff' }}>
                                                                     <TableCell>{rowIndex + 1}</TableCell>
-                                                                    <TableCell>{row.sno}</TableCell>
+                                                                    <TableCell>{row.studentId}</TableCell>
                                                                     <TableCell>{row.name}</TableCell>
                                                                     <TableCell>{row.cgpa}</TableCell>
                                                                 </TableRow>

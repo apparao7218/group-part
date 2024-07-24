@@ -29,13 +29,15 @@ router.post('/', async (req, res) => {
 
         const validRows = data.slice(startIndex).filter(row => {
             const sno = row.columns.get('column1');
-            const name = row.columns.get('column4');
-            const cgpa = row.columns.get('column5'); // Assuming CGPA is in column5
+            const studentId = row.columns.get('column2');
+            const name = row.columns.get('column3');
+            const cgpa = row.columns.get('column4'); 
             return sno !== undefined && name !== undefined && cgpa !== undefined && sno !== 'S.NO' && name !== 'STUD NAME' && !isNaN(parseFloat(cgpa));
         }).map(row => ({
             sno: row.columns.get('column1'),
-            name: row.columns.get('column4'),
-            cgpa: parseFloat(row.columns.get('column5')) // Convert CGPA to number
+            studentId :row.columns.get('column2'),
+            name: row.columns.get('column3'),
+            cgpa: parseFloat(row.columns.get('column4')) 
         }));
 
         // Sort rows by CGPA in descending order
@@ -55,12 +57,12 @@ router.post('/', async (req, res) => {
         const low = validRows.slice(lowStart);
 
         // Log the results for debugging
-        console.log('Higher:', higher);
-        console.log('Higher count:', higher.length);
-        console.log('Medium:', medium);
-        console.log('Medium count:', medium.length);
-        console.log('Low:', low);
-        console.log('Low count:', low.length);
+        // console.log('Higher:', higher);
+        // console.log('Higher count:', higher.length);
+        // console.log('Medium:', medium);
+        // console.log('Medium count:', medium.length);
+        // console.log('Low:', low);
+        // console.log('Low count:', low.length);
 
         // Create groups based on specified size
         const groups = [];
