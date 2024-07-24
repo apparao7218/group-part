@@ -169,7 +169,7 @@ const Home = () => {
                             sx={{ width: '100%', marginTop: 2 }}
                         >
                             <Typography variant="body1" color='red' sx={{ mb: 2 }}>
-                                Please upload an Excel file with the following format to get group data:
+                                Please upload an Excel file with the following format only to get group data:
                             </Typography>
                             <img src={instructionPng} alt="instructions" width='90%' height='auto' />
                         </Box>
