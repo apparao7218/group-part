@@ -45,9 +45,22 @@ router.post('/', async (req, res) => {
         const partSize = Math.floor(totalMembers / 3);
         const remainder = totalMembers % 3;
 
-        const higher = validRows.slice(0, partSize + (remainder > 0 ? 1 : 0));
-        const medium = validRows.slice(partSize + (remainder > 0 ? 1 : 0), 2 * partSize + (remainder > 1 ? 1 : 0));
-        const low = validRows.slice(2 * partSize + (remainder > 1 ? 1 : 0));
+        // Calculate slicing indices
+        const higherEnd = partSize + (remainder > 0 ? 1 : 0);
+        const mediumEnd = higherEnd + partSize + (remainder > 1 ? 1 : 0);
+        const lowStart = mediumEnd;
+
+        const higher = validRows.slice(0, higherEnd);
+        const medium = validRows.slice(higherEnd, mediumEnd);
+        const low = validRows.slice(lowStart);
+
+        // Log the results for debugging
+        console.log('Higher:', higher);
+        console.log('Higher count:', higher.length);
+        console.log('Medium:', medium);
+        console.log('Medium count:', medium.length);
+        console.log('Low:', low);
+        console.log('Low count:', low.length);
 
         // Create groups
         const groups = [];
@@ -61,12 +74,11 @@ router.post('/', async (req, res) => {
             const group = [];
 
             // Add first person from higher if available and not used
-            while (higherIndex < higher.length) {
+            if (higherIndex < higher.length) {
                 const higherPerson = higher[higherIndex++];
                 if (!usedHigher.has(higherPerson.sno)) {
                     group.push(higherPerson);
                     usedHigher.add(higherPerson.sno);
-                    break;
                 }
             }
 
@@ -77,12 +89,11 @@ router.post('/', async (req, res) => {
             }
 
             // Add last person from low if available and not used
-            while (lowIndex >= 0) {
+            if (lowIndex >= 0) {
                 const lowPerson = low[lowIndex--];
                 if (!usedLow.has(lowPerson.sno)) {
                     group.push(lowPerson);
                     usedLow.add(lowPerson.sno);
-                    break;
                 }
             }
 
@@ -101,13 +112,27 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // Log the results for debugging
-        console.log('Higher:', higher);
-        console.log('Higher count:', higher.length);
-        console.log('Medium:', medium);
-        console.log('Medium count:', medium.length);
-        console.log('Low:', low);
-        console.log('Low count:', low.length);
+        // Combine any remaining members into groups of the specified size
+        const remainingMembers = [...higher.slice(higherIndex), ...medium, ...low.slice(0, lowIndex + 1)];
+        let i = 0;
+        while (remainingMembers.length > 0) {
+            const remainingGroup = remainingMembers.splice(0, groupSize);
+            if (remainingGroup.length < groupSize) {
+                for (const member of remainingGroup) {
+                    groups[i % groups.length].push(member);
+                    i++;
+                }
+            } else {
+                groups.push(remainingGroup);
+            }
+        }
+
+        // Ensure all groups meet the specified group size
+        for (i = 0; i < groups.length; i++) {
+            while (groups[i].length < groupSize && remainingMembers.length > 0) {
+                groups[i].push(remainingMembers.shift());
+            }
+        }
 
         res.status(200).json(groups);
     } catch (error) {
