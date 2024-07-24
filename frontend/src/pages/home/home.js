@@ -118,16 +118,13 @@ const Home = () => {
             width: "100vw",
             overflow: "hidden",
             padding: 2,
-            // border: '1px solid black'
         }}>
             <Box
                 display="flex"
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="center"
-                // border = '1px solid black'
                 width='100%'
-            // sx={{ width: '100%', marginBottom: 2 }}
             >
                 <Typography variant="h5" component="h1" gutterBottom>
                     Upload Excel File
@@ -137,17 +134,14 @@ const Home = () => {
                     flexDirection="column"
                     alignItems="center"
                     justifyContent="center"
-                    // border = '1px solid black'
-                    // width='100%'
                     sx={{ gap: 2 }}
                 >
                     <Box
                         display="flex"
-                        flexDirection="row"
+                        flexDirection="column"
                         justifyContent='center'
-                        alignItems="center"
-                        // border = '1px solid black'
-                        width='100%'
+                        alignItems="stretch" 
+                        // width='100%'
                         sx={{ gap: 2, padding: 2, borderRadius: 1 }}
                     >
                         <TextField
@@ -159,7 +153,6 @@ const Home = () => {
                             error={!!fileError}
                             helperText={fileError}
                             // fullWidth
-                            sx={{ maxWidth: 300 }}
                         />
                         <TextField
                             label="Enter the group size"
@@ -171,7 +164,6 @@ const Home = () => {
                             error={!!groupSizeError}
                             helperText={groupSizeError}
                             fullWidth
-                            sx={{ maxWidth: 150 }}
                         />
                         <Button
                             variant="contained"
@@ -179,14 +171,13 @@ const Home = () => {
                             startIcon={<UploadFileIcon />}
                             onClick={handleUpload}
                             fullWidth
-                            sx={{ maxWidth: 150 }}
                         >
                             Upload
                         </Button>
                     </Box>
                     {!isFileUploaded && (
                         <Box
-                            sx={{ width: '100%', marginTop: 2, textAlign: 'center',  padding: 2, borderRadius: 1 }}
+                            sx={{ width: '100%', marginTop: 2, textAlign: 'center', padding: 2, borderRadius: 1 }}
                         >
                             <Typography variant="body1" color='red' sx={{ mb: 2 }}>
                                 Please upload an Excel file with the following format only to get group data:
@@ -254,7 +245,7 @@ const Home = () => {
                                 variant="contained"
                                 color="primary"
                                 onClick={downloadPDF}
-                                sx={{ marginTop: 2 }}
+                                sx={{ marginTop: 2, width: '100%', maxWidth: 300 }}
                             >
                                 Download PDF
                             </Button>
