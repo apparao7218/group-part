@@ -15,7 +15,13 @@ router.post('/', async (req, res) => {
             return res.status(400).send('No data found in the Excel sheet.');
         }
 
-        const validRows = data.slice(1).filter(row => {
+        // Find the index where SNO starts with '1'
+        const startIndex = data.findIndex(row => row.columns.get('column1') === '1');
+        if (startIndex === -1) {
+            return res.status(400).send('No valid starting row found in the Excel sheet.');
+        }
+
+        const validRows = data.slice(startIndex).filter(row => {
             const sno = row.columns.get('column1');
             const name = row.columns.get('column4');
             return sno !== undefined && name !== undefined && sno !== 'S.NO' && name !== 'STUD NAME';
@@ -24,22 +30,51 @@ router.post('/', async (req, res) => {
             name: row.columns.get('column4')
         }));
 
+        const groupSize = 4;
         const groups = [];
-        for (let i = 0; i < validRows.length; i += 4) {
-            const group = validRows.slice(i, i + 4);
+        const usedMembers = new Set(); // Track members already added to a group
+
+        let index = 0;
+
+        // Distribute members into groups of 4
+        while (index < validRows.length) {
+            const group = [];
+            while (group.length < groupSize && index < validRows.length) {
+                const member = validRows[index];
+                if (!usedMembers.has(member.sno)) {
+                    group.push(member);
+                    usedMembers.add(member.sno);
+                }
+                index++;
+            }
             groups.push(group);
         }
 
-        // Check if there are any remaining students that did not fit into a complete group of 4
-        const remainder = validRows.length % 4;
-        if (remainder > 0) {
-            const lastGroup = validRows.slice(-remainder);
-            groups.push(lastGroup);
+        // Calculate the number of remainder members
+        const remainder = validRows.length % groupSize;
+        const totalGroups = groups.length;
+
+        if (remainder > 0 && totalGroups > 1) {
+            // Extract remainder members
+            const remainderMembers = validRows.slice(-remainder);
+
+            // Add remainder members evenly to the last few groups without duplication
+            let groupIndex = totalGroups - Math.ceil(remainder / groupSize); // Start from the appropriate group
+
+            remainderMembers.forEach((member, idx) => {
+                if (!usedMembers.has(member.sno)) {
+                    if (groups[groupIndex]) {
+                        groups[groupIndex].push(member);
+                        usedMembers.add(member.sno);
+                        groupIndex = (groupIndex + 1) % totalGroups; // Cycle through groups
+                    }
+                }
+            });
         }
 
         res.status(200).json(groups);
     } catch (error) {
-        console.error('Error processing data:', error); 
+        console.error('Error processing data:', error);
         res.status(500).send('Error processing data.');
     }
 });
