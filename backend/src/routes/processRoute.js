@@ -62,75 +62,54 @@ router.post('/', async (req, res) => {
         console.log('Low:', low);
         console.log('Low count:', low.length);
 
-        // Create groups
+        // Create groups based on specified size
         const groups = [];
-        const usedHigher = new Set();
-        const usedLow = new Set();
-
         let higherIndex = 0;
         let lowIndex = low.length - 1;
 
         while (higherIndex < higher.length || lowIndex >= 0) {
             const group = [];
 
-            // Add first person from higher if available and not used
+            // Add one person from higher if available
             if (higherIndex < higher.length) {
-                const higherPerson = higher[higherIndex++];
-                if (!usedHigher.has(higherPerson.sno)) {
-                    group.push(higherPerson);
-                    usedHigher.add(higherPerson.sno);
-                }
+                group.push(higher[higherIndex]);
+                higherIndex++;
             }
 
-            // Add one person from medium if available
-            if (medium.length > 0) {
-                const mediumPerson = medium.shift();
-                group.push(mediumPerson);
-            }
-
-            // Add last person from low if available and not used
+            // Add one person from low if available
             if (lowIndex >= 0) {
-                const lowPerson = low[lowIndex--];
-                if (!usedLow.has(lowPerson.sno)) {
-                    group.push(lowPerson);
-                    usedLow.add(lowPerson.sno);
-                }
+                group.push(low[lowIndex]);
+                lowIndex--;
             }
 
-            // Add additional members from low to meet the group size
-            while (group.length < groupSize && lowIndex >= 0) {
-                const lowPerson = low[lowIndex--];
-                if (!usedLow.has(lowPerson.sno)) {
-                    group.push(lowPerson);
-                    usedLow.add(lowPerson.sno);
-                }
+            // Add random members from medium
+            while (group.length < groupSize && medium.length > 0) {
+                const randomIndex = Math.floor(Math.random() * medium.length);
+                group.push(medium[randomIndex]);
+                medium.splice(randomIndex, 1); // Remove the selected item
             }
 
-            // Add the group to the list if it has members
-            if (group.length > 0) {
+            // Add the group to the list if it meets the specified size
+            if (group.length === groupSize) {
                 groups.push(group);
-            }
-        }
-
-        // Combine any remaining members into groups of the specified size
-        const remainingMembers = [...higher.slice(higherIndex), ...medium, ...low.slice(0, lowIndex + 1)];
-        let i = 0;
-        while (remainingMembers.length > 0) {
-            const remainingGroup = remainingMembers.splice(0, groupSize);
-            if (remainingGroup.length < groupSize) {
-                for (const member of remainingGroup) {
-                    groups[i % groups.length].push(member);
-                    i++;
-                }
             } else {
-                groups.push(remainingGroup);
+                // If not enough members to form a valid group, add remaining members
+                medium.push(...group); // Add to medium for future groups
             }
         }
 
-        // Ensure all groups meet the specified group size
-        for (i = 0; i < groups.length; i++) {
-            while (groups[i].length < groupSize && remainingMembers.length > 0) {
-                groups[i].push(remainingMembers.shift());
+        // Add remaining members to existing groups
+        const remainingMembers = [...higher.slice(higherIndex), ...medium, ...low.slice(0, lowIndex + 1)];
+        if (remainingMembers.length > 0) {
+            let i = 0;
+            while (remainingMembers.length > 0) {
+                const member = remainingMembers.shift();
+                if (groups.length > 0) {
+                    groups[i % groups.length].push(member);
+                } else {
+                    groups.push([member]);
+                }
+                i++;
             }
         }
 
