@@ -2,23 +2,25 @@ import React, { useState } from 'react';
 import { Box, Button, Container, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, CircularProgress } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Home = () => {
     const [file, setFile] = useState(null);
     const [groups, setGroups] = useState([]);
-    const [groupSize, setGroupSize] = useState(''); 
-    const [fileError, setFileError] = useState(''); 
-    const [groupSizeError, setGroupSizeError] = useState(''); 
-    const [loading, setLoading] = useState(false); 
+    const [groupSize, setGroupSize] = useState('');
+    const [fileError, setFileError] = useState('');
+    const [groupSizeError, setGroupSizeError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
-        setFileError(''); 
+        setFileError('');
     };
 
     const handleGroupSizeChange = (event) => {
         setGroupSize(event.target.value);
-        setGroupSizeError(''); 
+        setGroupSizeError('');
     };
 
     const handleUpload = async () => {
@@ -38,12 +40,12 @@ const Home = () => {
 
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('groupSize', groupSize); 
+        formData.append('groupSize', groupSize);
 
-        setLoading(true); 
+        setLoading(true);
 
         try {
-            const uploadResponse = await axios.post('http://localhost:3001/api/excel-upload', formData, {
+            await axios.post('http://localhost:3001/api/excel-upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -55,8 +57,50 @@ const Home = () => {
         } catch (error) {
             console.error('Error uploading or processing file:', error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
+    };
+
+    const downloadPDF = () => {
+        const doc = new jsPDF();
+
+        // Title
+        doc.setFontSize(18);
+        doc.text('Grouped Data', 14, 16);
+
+        // Table header
+        const headers = ['Group', 'S.NO', 'STUDNAME', 'CGPA'];
+
+        let yOffset = 30; // Initial vertical position
+        groups.forEach((group, index) => {
+            // Group title
+            doc.setFontSize(14);
+            doc.text(`Group ${index + 1}`, 14, yOffset);
+            yOffset += 10;
+
+            // Table content
+            const data = group.map(member => [index + 1, member.sno, member.name, member.cgpa]);
+
+            doc.autoTable({
+                head: [headers],
+                body: data,
+                startY: yOffset,
+                margin: { horizontal: 14 },
+                theme: 'grid',
+                didDrawCell: (data) => {
+                    if (data.row.index === 0) {
+                        // Header cell styles
+                        data.cell.styles.fillColor = [0, 0, 255]; // Blue
+                        data.cell.styles.textColor = [255, 255, 255]; // White
+                    }
+                }
+            });
+
+            // Update vertical position for the next group
+            yOffset = doc.lastAutoTable.finalY + 10;
+        });
+
+        doc.save('grouped_data.pdf');
     };
 
     return (
@@ -96,7 +140,7 @@ const Home = () => {
                         value={groupSize}
                         onChange={handleGroupSizeChange}
                         variant="outlined"
-                        inputProps={{ min: 1 }} 
+                        inputProps={{ min: 1 }}
                         sx={{ marginLeft: 2 }}
                         error={!!groupSizeError}
                         helperText={groupSizeError}
@@ -165,6 +209,14 @@ const Home = () => {
                                     </Grid>
                                 ))}
                             </Grid>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={downloadPDF}
+                                sx={{ marginTop: 2 }}
+                            >
+                                Download PDF
+                            </Button>
                         </Box>
                     )
                 )}
