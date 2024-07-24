@@ -113,24 +113,43 @@ const Home = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             height: "100vh",
             width: "100vw",
             overflow: "hidden",
-            padding: 2
+            padding: 2,
+            // border: '1px solid black'
         }}>
             <Box
                 display="flex"
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="center"
-                sx={{ width: '100%', marginBottom: 2 }}
+                // border = '1px solid black'
+                width='100%'
+            // sx={{ width: '100%', marginBottom: 2 }}
             >
-                <Typography variant="h4" component="h1" gutterBottom>
+                <Typography variant="h5" component="h1" gutterBottom>
                     Upload Excel File
                 </Typography>
-                <Box display="flex" flexDirection='column' alignItems="center" sx={{ gap: 2 }}>
-                    <Box display="flex" flexDirection='row' alignItems="center" sx={{ gap: 1 }}>
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    // border = '1px solid black'
+                    // width='100%'
+                    sx={{ gap: 2 }}
+                >
+                    <Box
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent='center'
+                        alignItems="center"
+                        // border = '1px solid black'
+                        width='100%'
+                        sx={{ gap: 2, padding: 2, borderRadius: 1 }}
+                    >
                         <TextField
                             required
                             type="file"
@@ -139,6 +158,8 @@ const Home = () => {
                             variant="outlined"
                             error={!!fileError}
                             helperText={fileError}
+                            // fullWidth
+                            sx={{ maxWidth: 300 }}
                         />
                         <TextField
                             label="Enter the group size"
@@ -147,34 +168,34 @@ const Home = () => {
                             onChange={handleGroupSizeChange}
                             variant="outlined"
                             inputProps={{ min: 1 }}
-                            sx={{ marginLeft: 2 }}
                             error={!!groupSizeError}
                             helperText={groupSizeError}
+                            fullWidth
+                            sx={{ maxWidth: 150 }}
                         />
                         <Button
                             variant="contained"
                             color="primary"
                             startIcon={<UploadFileIcon />}
                             onClick={handleUpload}
-                            sx={{ marginLeft: 2 }}
+                            fullWidth
+                            sx={{ maxWidth: 150 }}
                         >
                             Upload
                         </Button>
                     </Box>
                     {!isFileUploaded && (
                         <Box
-                            display="flex"
-                            flexDirection="column"
-                            alignItems="center"
-                            sx={{ width: '100%', marginTop: 2 }}
+                            sx={{ width: '100%', marginTop: 2, textAlign: 'center',  padding: 2, borderRadius: 1 }}
                         >
                             <Typography variant="body1" color='red' sx={{ mb: 2 }}>
                                 Please upload an Excel file with the following format only to get group data:
                             </Typography>
-                            <img src={instructionPng} alt="instructions" width='90%' height='auto' />
+                            <img src={instructionPng} alt="instructions" style={{ width: '80%', maxHeight: '500px', objectFit: 'contain' }} />
                         </Box>
                     )}
                 </Box>
+
             </Box>
             <Box
                 display="flex"
