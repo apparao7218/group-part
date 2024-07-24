@@ -4,7 +4,7 @@ const ExcelSheet = require('../models/excel');
 
 router.post('/', async (req, res) => {
     try {
-        const groupSize = parseInt(req.body.groupSize, 10) || 4; // Use groupSize from request or default to 4
+        const groupSize = parseInt(req.body.groupSize, 10) || 3; 
 
         if (!groupSize || isNaN(groupSize) || groupSize <= 0) {
             return res.status(400).send('Invalid group size.');
