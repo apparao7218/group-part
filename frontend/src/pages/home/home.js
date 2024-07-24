@@ -49,10 +49,7 @@ const Home = () => {
                 },
             });
 
-            // console.log('File uploaded successfully:', uploadResponse.data);
-
             const processResponse = await axios.post('http://localhost:3001/api/excel-process', { groupSize });
-            // console.log('Data processed and grouped:', processResponse.data);
             setGroups(processResponse.data);
 
         } catch (error) {
@@ -144,14 +141,18 @@ const Home = () => {
                                                         <TableHead sx={{ backgroundColor: '#1976d2', color: '#ffffff' }}>
                                                             <TableRow>
                                                                 <TableCell sx={{ color: '#ffffff' }}>S.NO</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff' }}>O.NO</TableCell>
                                                                 <TableCell sx={{ color: '#ffffff' }}>STUDNAME</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff' }}>CGPA</TableCell>
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
                                                             {group.map((row, rowIndex) => (
                                                                 <TableRow key={rowIndex} sx={{ backgroundColor: rowIndex % 2 === 0 ? '#f5f5f5' : '#ffffff' }}>
                                                                     <TableCell>{rowIndex + 1}</TableCell>
+                                                                    <TableCell>{row.sno}</TableCell>
                                                                     <TableCell>{row.name}</TableCell>
+                                                                    <TableCell>{row.cgpa}</TableCell>
                                                                 </TableRow>
                                                             ))}
                                                         </TableBody>
