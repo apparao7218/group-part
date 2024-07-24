@@ -4,6 +4,11 @@ const ExcelSheet = require('../models/excel');
 
 router.post('/', async (req, res) => {
     try {
+        const groupSize = parseInt(req.body.groupSize, 10) || 4; // Use groupSize from request or default to 4
+
+        if (!groupSize || isNaN(groupSize) || groupSize <= 0) {
+            return res.status(400).send('Invalid group size.');
+        }
         const excelSheet = await ExcelSheet.findOne().sort({ uploadDate: -1 }).exec();
         if (!excelSheet) {
             return res.status(404).send('No Excel file found.');
@@ -30,7 +35,6 @@ router.post('/', async (req, res) => {
             name: row.columns.get('column4')
         }));
 
-        const groupSize = 4;
         const groups = [];
         let index = 0;
 

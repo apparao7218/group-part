@@ -6,34 +6,48 @@ import axios from 'axios';
 const Home = () => {
     const [file, setFile] = useState(null);
     const [groups, setGroups] = useState([]);
+    const [groupSize, setGroupSize] = useState(''); // State to hold group size
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
     };
 
+    const handleGroupSizeChange = (event) => {
+        setGroupSize(event.target.value);
+    };
+
     const handleUpload = async () => {
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const uploadResponse = await axios.post('http://localhost:3001/api/excel-upload', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-
-                console.log('File uploaded successfully:', uploadResponse.data);
-
-                const processResponse = await axios.post('http://localhost:3001/api/excel-process');
-                console.log('Data processed and grouped:', processResponse.data);
-                setGroups(processResponse.data);
-
-            } catch (error) {
-                console.error('Error uploading or processing file:', error);
-            }
-        } else {
+        if (!file) {
             console.log('No file selected');
+            return;
+        }
+
+        if (!groupSize || isNaN(groupSize) || groupSize <= 0) {
+            console.log('Invalid group size');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('groupSize', groupSize); 
+
+        try {
+            // Upload the file
+            const uploadResponse = await axios.post('http://localhost:3001/api/excel-upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            console.log('File uploaded successfully:', uploadResponse.data);
+
+            // Process the file and get the grouped data
+            const processResponse = await axios.post('http://localhost:3001/api/excel-process', { groupSize });
+            console.log('Data processed and grouped:', processResponse.data);
+            setGroups(processResponse.data);
+
+        } catch (error) {
+            console.error('Error uploading or processing file:', error);
         }
     };
 
@@ -60,16 +74,27 @@ const Home = () => {
                 </Typography>
                 <Box display="flex" flexDirection='row' alignItems="center" sx={{ gap: 1 }}>
                     <TextField
+                        required
                         type="file"
                         onChange={handleFileChange}
                         inputProps={{ accept: '.xlsx, .xls' }}
                         variant="outlined"
+                    />
+                    <TextField
+                        label="Enter the group size"
+                        type="number"
+                        value={groupSize}
+                        onChange={handleGroupSizeChange}
+                        variant="outlined"
+                        inputProps={{ min: 1 }} 
+                        sx={{ marginLeft: 2 }}
                     />
                     <Button
                         variant="contained"
                         color="primary"
                         startIcon={<UploadFileIcon />}
                         onClick={handleUpload}
+                        sx={{ marginLeft: 2 }}
                     >
                         Upload
                     </Button>
@@ -105,7 +130,7 @@ const Home = () => {
                                                     <TableBody>
                                                         {group.map((row, rowIndex) => (
                                                             <TableRow key={rowIndex} sx={{ backgroundColor: rowIndex % 2 === 0 ? '#f5f5f5' : '#ffffff' }}>
-                                                                <TableCell>{rowIndex +1}</TableCell>
+                                                                <TableCell>{rowIndex + 1}</TableCell>
                                                                 <TableCell>{row.name}</TableCell>
                                                             </TableRow>
                                                         ))}
