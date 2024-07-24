@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
             return res.status(400).send('No data found in the Excel sheet.');
         }
 
-        // Find the index where SNO starts with '1'
+        // below code find the index where SNO starts with '1'
         const startIndex = data.findIndex(row => row.columns.get('column1') === '1');
         if (startIndex === -1) {
             return res.status(400).send('No valid starting row found in the Excel sheet.');
@@ -32,42 +32,39 @@ router.post('/', async (req, res) => {
 
         const groupSize = 4;
         const groups = [];
-        const usedMembers = new Set(); // Track members already added to a group
-
         let index = 0;
 
-        // Distribute members into groups of 4
+        // Distribute members evenly into existing groups
         while (index < validRows.length) {
             const group = [];
             while (group.length < groupSize && index < validRows.length) {
-                const member = validRows[index];
-                if (!usedMembers.has(member.sno)) {
-                    group.push(member);
-                    usedMembers.add(member.sno);
-                }
+                group.push(validRows[index]);
                 index++;
             }
-            groups.push(group);
+            // creates a seperate group if members reach described size
+            if (group.length === groupSize) {
+                groups.push(group);
+            }
         }
 
-        // Calculate the number of remainder members
-        const remainder = validRows.length % groupSize;
+        // Calculate the number of  members left
+        const totalMembers = validRows.length;
         const totalGroups = groups.length;
+        const remainder = totalMembers % groupSize;
 
-        if (remainder > 0 && totalGroups > 1) {
-            // Extract remainder members
+        if (remainder > 0 && totalGroups > 0) {
+            // Extract left members
             const remainderMembers = validRows.slice(-remainder);
 
-            // Add remainder members evenly to the last few groups without duplication
-            let groupIndex = totalGroups - Math.ceil(remainder / groupSize); // Start from the appropriate group
-
-            remainderMembers.forEach((member, idx) => {
-                if (!usedMembers.has(member.sno)) {
-                    if (groups[groupIndex]) {
-                        groups[groupIndex].push(member);
-                        usedMembers.add(member.sno);
-                        groupIndex = (groupIndex + 1) % totalGroups; // Cycle through groups
-                    }
+            // Distribute left members to existing groups
+            let groupIndex = 0;
+            remainderMembers.forEach(member => {
+                // Add members to groups only if the group has space
+                if (groups[groupIndex].length < groupSize) {
+                    groups[groupIndex].push(member);
+                } else {
+                    groupIndex = (groupIndex + 1) % totalGroups; 
+                    groups[groupIndex].push(member);
                 }
             });
         }
