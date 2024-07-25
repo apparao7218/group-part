@@ -20,7 +20,7 @@ const Header = () => {
                 left: 0,
                 zIndex: 1200,
                 borderBottom: `1px solid ${theme.palette.divider}`,
-                backgroundColor: theme.palette.background.default, // Optional background color
+                backgroundColor: theme.palette.background.default,
             }}
         >
             <img src={logo} alt="Woxsen Logo" style={{ width: '135px', height: 'auto' }} />

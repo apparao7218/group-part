@@ -8,8 +8,8 @@ const Footer = () => {
         <Box
             component="footer"
             sx={{
-                px: 2,
-                py: 2,
+                px: 0.7,
+                py: 0.7,
                 position: 'fixed',
                 bottom: 0,
                 width: '100%',
@@ -23,11 +23,11 @@ const Footer = () => {
                 borderTop: `1px solid ${theme.palette.divider}`, // Optional border
             }}
         >
-            <Typography variant="h6">
+            <Typography variant="h7">
                 Developed by Apparao Puchakayala
             </Typography>
-            <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-                CSE-Technician SOT
+            <Typography variant="body2" sx={{ fontStyle: '' }}>
+                CSE-Technician - SOT
             </Typography>
         </Box>
     );

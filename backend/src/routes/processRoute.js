@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
         const partSize = Math.floor(totalMembers / 3);
         const remainder = totalMembers % 3;
 
-        // Calculate slicing indices
+        // dividing students into three parts
         const higherEnd = partSize + (remainder > 0 ? 1 : 0);
         const mediumEnd = higherEnd + partSize + (remainder > 1 ? 1 : 0);
         const lowStart = mediumEnd;
@@ -56,7 +56,6 @@ router.post('/', async (req, res) => {
         const medium = validRows.slice(higherEnd, mediumEnd);
         const low = validRows.slice(lowStart);
 
-        // Log the results for debugging
         // console.log('Higher:', higher);
         // console.log('Higher count:', higher.length);
         // console.log('Medium:', medium);
@@ -88,7 +87,7 @@ router.post('/', async (req, res) => {
             while (group.length < groupSize && medium.length > 0) {
                 const randomIndex = Math.floor(Math.random() * medium.length);
                 group.push(medium[randomIndex]);
-                medium.splice(randomIndex, 1); // Remove the selected item
+                medium.splice(randomIndex, 1); 
             }
 
             // Add the group to the list if it meets the specified size
@@ -96,7 +95,7 @@ router.post('/', async (req, res) => {
                 groups.push(group);
             } else {
                 // If not enough members to form a valid group, add remaining members
-                medium.push(...group); // Add to medium for future groups
+                medium.push(...group); 
             }
         }
 
