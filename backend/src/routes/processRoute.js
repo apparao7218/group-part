@@ -114,7 +114,15 @@ router.post('/', async (req, res) => {
                 i++;
             }
         }
-
+        // const groupsWithAverages = groups.map(group => {
+        //     const totalCGPA = group.reduce((sum, member) => sum + member.cgpa, 0);
+        //     const averageCGPA = totalCGPA / group.length;
+        //     return {
+        //         members: group,
+        //         averageCGPA: averageCGPA.toFixed(2) 
+        //     };
+        // });
+        
         res.status(200).json(groups);
     } catch (error) {
         console.error('Error processing data:', error);

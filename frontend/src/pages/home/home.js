@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, CircularProgress } from '@mui/material';
+import React, { useMemo, useState } from 'react';
+import { Box, Button, Container, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, CircularProgress, TableFooter } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import axios from 'axios';
 import jsPDF from 'jspdf';
@@ -14,6 +14,7 @@ const Home = () => {
     const [groupSizeError, setGroupSizeError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
+
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -54,8 +55,9 @@ const Home = () => {
             });
 
             const processResponse = await axios.post('http://localhost:3001/api/excel-process', { groupSize });
+
             setGroups(processResponse.data);
-            setIsFileUploaded(true); // Set to true after successful upload
+            setIsFileUploaded(true);
 
         } catch (error) {
             console.error('Error uploading or processing file:', error);
@@ -66,32 +68,54 @@ const Home = () => {
 
     const downloadPDF = () => {
         const doc = new jsPDF();
+        doc.setFont('Poppins', 'normal'); // Set default font to Poppins Regular
 
-        // Title
-        doc.setFontSize(18);
-        doc.text('Grouped Data', 14, 16);
-
-        // Table header
-        const headers = ['S.NO', 'STUDENT ID', 'STUDNAME', 'CGPA'];
+        const headers = ['S.NO', 'STUDENT ID', 'STUDNAME'];
 
         let yOffset = 30; // Initial vertical position
         let sequentialNumber = 1; // Initialize sequential number
 
         groups.forEach((group, index) => {
+            // Calculate average CGPA for the group
+            const avgCgpa = (group.reduce((sum, member) => sum + member.cgpa, 0) / group.length).toFixed(2);
+
             // Group title
             doc.setFontSize(14);
             doc.text(`Group ${index + 1}`, 14, yOffset);
             yOffset += 10;
 
-            // Table content
-            const data = group.map(member => [sequentialNumber++, member.studentId, member.name, member.cgpa]);
+            // Add average CGPA text above the table
+            doc.setFontSize(12);
+            doc.text(`Avg CGPA of this group: ${avgCgpa}`, 14, yOffset);
+            yOffset += 10; // Add space between the text and the table
 
+            // Prepare table data
+            const data = group.map(member => [sequentialNumber++, member.studentId, member.name]);
+
+            // Define column styles
+            const columnStyles = {
+                0: { halign: 'center' }, // Center align S.NO
+                1: { halign: 'center' }, // Center align STUDENT ID
+                2: { halign: 'center' }  // Center align STUDNAME
+            };
+
+            // Add table to PDF
             doc.autoTable({
                 head: [headers],
                 body: data,
                 startY: yOffset,
                 margin: { horizontal: 14 },
                 theme: 'grid',
+                columnStyles: columnStyles,
+                headStyles: {
+                    halign: 'center',  // Center align headers
+                    font: 'Poppins',   // Set font to Poppins
+                    fontSize: 12
+                },
+                styles: {
+                    font: 'Poppins',   // Set font to Poppins for table data
+                    fontSize: 10
+                },
                 didDrawCell: (data) => {
                     if (data.row.index === 0) {
                         // Header cell styles
@@ -101,12 +125,20 @@ const Home = () => {
                 }
             });
 
-            // Update vertical position for the next group
-            yOffset = doc.lastAutoTable.finalY + 10;
+            // Update yOffset for the next group
+            yOffset = doc.lastAutoTable.finalY + 20; // Space between groups
         });
 
         doc.save('grouped_data.pdf');
     };
+
+
+    const calculateAverageCGPA = (group) => {
+        if (group.length === 0) return 0;
+        const totalCGPA = group.reduce((sum, member) => sum + parseFloat(member.cgpa), 0);
+        return totalCGPA / group.length;
+    };
+
 
     return (
         <Container sx={{
@@ -140,8 +172,7 @@ const Home = () => {
                         display="flex"
                         flexDirection="column"
                         justifyContent='center'
-                        alignItems="stretch" 
-                        // width='100%'
+                        alignItems="stretch"
                         sx={{ gap: 2, padding: 2, borderRadius: 1 }}
                     >
                         <TextField
@@ -152,7 +183,6 @@ const Home = () => {
                             variant="outlined"
                             error={!!fileError}
                             helperText={fileError}
-                            // fullWidth
                         />
                         <TextField
                             label="Enter the group size"
@@ -214,26 +244,34 @@ const Home = () => {
                                             {group.length > 0 ? (
                                                 <TableContainer component={Paper}>
                                                     <Table>
-                                                        <TableHead sx={{ backgroundColor: '#1976d2', color: '#ffffff' }}>
+                                                        <TableHead sx={{ backgroundColor: '#1976d2' }}>
                                                             <TableRow>
-                                                                <TableCell sx={{ color: '#ffffff' }}>S.No</TableCell>
-                                                                <TableCell sx={{ color: '#ffffff' }}>Id</TableCell>
-                                                                <TableCell sx={{ color: '#ffffff' }}>Name</TableCell>
-                                                                <TableCell sx={{ color: '#ffffff' }}>CGPA</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>S.No</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Student Id</TableCell>
+                                                                <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Name</TableCell>
+                                                                {/* <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>CGPA</TableCell> */}
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
                                                             {group.map((row, rowIndex) => (
                                                                 <TableRow key={rowIndex} sx={{ backgroundColor: rowIndex % 2 === 0 ? '#f5f5f5' : '#ffffff' }}>
-                                                                    <TableCell>{rowIndex + 1}</TableCell>
-                                                                    <TableCell>{row.studentId}</TableCell>
-                                                                    <TableCell>{row.name}</TableCell>
-                                                                    <TableCell>{row.cgpa}</TableCell>
+                                                                    <TableCell sx={{ textAlign: 'center' }}>{rowIndex + 1}</TableCell>
+                                                                    <TableCell sx={{ textAlign: 'center' }}>{row.studentId}</TableCell>
+                                                                    <TableCell sx={{ textAlign: 'center' }}>{row.name}</TableCell>
+                                                                    {/* <TableCell sx={{ textAlign: 'center' }}>{row.cgpa}</TableCell> */}
                                                                 </TableRow>
                                                             ))}
                                                         </TableBody>
+                                                        <TableFooter>
+                                                            <TableRow>
+                                                                <TableCell colSpan={4} sx={{ textAlign: 'center', fontWeight: 'bold', backgroundColor: '#1976d2', color: '#ffffff' }}>
+                                                                    Average CGPA of this group is {calculateAverageCGPA(group).toFixed(2) || 'N/A'}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </TableFooter>
                                                     </Table>
                                                 </TableContainer>
+
                                             ) : (
                                                 <Typography variant="body1">No data available</Typography>
                                             )}
