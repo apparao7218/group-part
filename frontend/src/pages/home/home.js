@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Container, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, CircularProgress, TableFooter } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import instructionPng from '../../assets/instructions.png';
+import Footer from '../footer/footer';
 
 const Home = () => {
     const [file, setFile] = useState(null);
@@ -14,6 +15,13 @@ const Home = () => {
     const [groupSizeError, setGroupSizeError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
+
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, []);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -131,16 +139,22 @@ const Home = () => {
     };
 
     return (
-        <Container sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            height: "100vh",
-            width: "100vw",
-            overflow: "hidden",
-            padding: 2,
-        }}>
+        <Container
+            disableGutters
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                height: "calc(100vh - 220px)", 
+                width: "100%",
+                overflow: "hidden",
+                padding: 2,
+                marginTop: '120px', 
+                marginBottom: '120px', 
+                // border:'1px solid red'
+        
+            }}
+        >
             {loading ? (
                 <Box display="flex" justifyContent="center" alignItems="center" height="100%">
                     <CircularProgress />
@@ -200,16 +214,6 @@ const Home = () => {
                                 Upload
                             </Button>
                         </Box>
-                        {!isFileUploaded && (
-                            <Box
-                                sx={{ width: '100%', marginTop: 2, textAlign: 'center', padding: 2, borderRadius: 1 }}
-                            >
-                                <Typography variant="body1" color='red' sx={{ mb: 2 }}>
-                                    Please upload an Excel file with the following format only to get group data:
-                                </Typography>
-                                <img src={instructionPng} alt="instructions" style={{ width: '80%', maxHeight: '500px', objectFit: 'contain' }} />
-                            </Box>
-                        )}
                     </Box>
                 </Box>
             )}
@@ -218,7 +222,9 @@ const Home = () => {
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="flex-start"
-                sx={{ height: '80vh', width: '100%', overflowY: 'auto' }}
+                sx={{ height: 'calc(100% - 80px)', 
+                    width: '100%', overflowY: 'auto' ,
+                    }} // Adjust height to fit content
             >
                 {groups.length > 0 && (
                     <Box mt={4} width="100%" display="flex"
@@ -239,8 +245,6 @@ const Home = () => {
                                                             <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>S.No</TableCell>
                                                             <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Student Id</TableCell>
                                                             <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Name</TableCell>
-                                                            {/* <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>CGPA</TableCell> */}
-
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
@@ -249,21 +253,20 @@ const Home = () => {
                                                                 <TableCell sx={{ textAlign: 'center' }}>{rowIndex + 1}</TableCell>
                                                                 <TableCell sx={{ textAlign: 'center' }}>{row.studentId}</TableCell>
                                                                 <TableCell sx={{ textAlign: 'center' }}>{row.name}</TableCell>
-                                                                {/* <TableCell sx={{ textAlign: 'center' }}>{row.cgpa}</TableCell> */}
                                                             </TableRow>
                                                         ))}
                                                     </TableBody>
                                                     <TableFooter>
                                                         <TableRow>
-                                                            <TableCell colSpan={3} sx={{ textAlign: 'center', fontWeight: 'bold', backgroundColor: '#1976d2', color: '#ffffff' }}>
-                                                                Average CGPA of this group is {calculateAverageCGPA(group).toFixed(2) || 'N/A'}
+                                                            <TableCell colSpan={3} sx={{ textAlign: 'center' }}>
+                                                                <strong>Avg CGPA of this group: {calculateAverageCGPA(group).toFixed(2)}</strong>
                                                             </TableCell>
                                                         </TableRow>
                                                     </TableFooter>
                                                 </Table>
                                             </TableContainer>
                                         ) : (
-                                            <Typography variant="body1">No data available</Typography>
+                                            <Typography>No data available for this group.</Typography>
                                         )}
                                     </Box>
                                 </Grid>
@@ -273,13 +276,14 @@ const Home = () => {
                             variant="contained"
                             color="primary"
                             onClick={downloadPDF}
-                            sx={{ marginTop: 2, width: '100%', maxWidth: 300 }}
+                            sx={{ marginTop: '16px',marginBottom: '16px' }}
                         >
                             Download PDF
                         </Button>
                     </Box>
                 )}
             </Box>
+           
         </Container>
     );
 };
