@@ -100,7 +100,6 @@ const Home = () => {
         const headers = ['S.NO', 'STUDENT ID', 'STUDNAME'];
 
         let yOffset = 30;
-        let sequentialNumber = 1;
 
         groups.forEach((group, index) => {
             const avgCgpa = (group.reduce((sum, member) => sum + member.cgpa, 0) / group.length).toFixed(2);
@@ -112,6 +111,8 @@ const Home = () => {
             doc.setFontSize(12);
             doc.text(`Avg CGPA of this group: ${avgCgpa}`, 14, yOffset);
             yOffset += 10;
+            
+            let sequentialNumber = 1;
 
             const data = group.map(member => [sequentialNumber++, member.studentId, member.name]);
             const columnStyles = {
