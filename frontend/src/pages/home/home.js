@@ -74,13 +74,24 @@ const Home = () => {
         setLoading(true);
 
         try {
-            await axios.post('http://localhost:3001/api/excel-upload', formData, {
+            // const url = 'http://localhost:3001';
+
+            // await axios.post(`${url}/api/excel-upload`, formData, {
+            //     headers: {
+            //         'Content-Type': 'multipart/form-data',
+            //     },
+            // });
+
+            // const processResponse = await axios.post(`${url}/api/excel-process`, { groupSize });
+
+            await axios.post('/api/excel-upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
-            const processResponse = await axios.post('http://localhost:3001/api/excel-process', { groupSize });
+
+            const processResponse = await axios.post('/api/excel-process', { groupSize });
 
             setGroups(processResponse.data);
             setIsFileUploaded(true);
@@ -97,9 +108,12 @@ const Home = () => {
         const doc = new jsPDF();
         doc.setFont('Poppins', 'normal');
 
-        const headers = ['S.NO', 'STUDENT ID', 'STUDNAME'];
+        doc.setFontSize(18);
+        doc.text('Groups', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
 
         let yOffset = 30;
+
+        const headers = ['S.NO', 'STUDENT ID', 'STUDNAME'];
 
         groups.forEach((group, index) => {
             const avgCgpa = (group.reduce((sum, member) => sum + member.cgpa, 0) / group.length).toFixed(2);
@@ -111,7 +125,7 @@ const Home = () => {
             doc.setFontSize(12);
             doc.text(`Avg CGPA of this group: ${avgCgpa}`, 14, yOffset);
             yOffset += 10;
-            
+
             let sequentialNumber = 1;
 
             const data = group.map(member => [sequentialNumber++, member.studentId, member.name]);
@@ -150,6 +164,7 @@ const Home = () => {
 
         doc.save('grouped_data.pdf');
     };
+
 
     const calculateAverageCGPA = (group) => {
         if (group.length === 0) return 0;
@@ -200,9 +215,16 @@ const Home = () => {
                         justifyContent="center"
                         width='100%'
                     >
-                        <Typography variant="h6" component="h1" gutterBottom>
-                            Upload Excel File
-                        </Typography>
+                        <Box>
+                            <Typography variant="h5" component="h1" gutterBottom>
+                                Student Groups
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="h7" gutterBottom>
+                                Upload Excel File
+                            </Typography>
+                        </Box>
                         <Box
                             display="flex"
                             flexDirection="column"
@@ -267,9 +289,11 @@ const Home = () => {
                     alignItems="center"
                     justifyContent="flex-start"
                     sx={{
-                        height: 'calc(100% - 80px)',
-                        width: '100%', overflowY: 'auto',
-                    }} // Adjust height to fit content
+                        height: '100%',
+                        width: '100%',
+                        overflowY: 'auto',
+                        p: 1
+                    }}
                 >
                     {groups.length > 0 && (
                         <Box mt={4} width="100%" display="flex"
