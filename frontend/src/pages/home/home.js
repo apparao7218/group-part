@@ -32,6 +32,8 @@ const Home = () => {
     const [groupSizeError, setGroupSizeError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
+    const [count , setCount ] = useState(0);
+
 
     useEffect(() => {
         document.body.style.overflow = 'hidden';
@@ -112,7 +114,6 @@ const Home = () => {
             yOffset += 10;
 
             const data = group.map(member => [sequentialNumber++, member.studentId, member.name]);
-
             const columnStyles = {
                 0: { halign: 'center' },
                 1: { halign: 'center' },
@@ -167,6 +168,9 @@ const Home = () => {
         saveAs(data, 'student_data_template.xlsx');
     };
 
+    const totalStudents = groups.reduce((sum, group) => sum + group.length, 0);
+
+    
     return (
         <Container
             disableGutters
@@ -270,13 +274,42 @@ const Home = () => {
                         <Box mt={4} width="100%" display="flex"
                             flexDirection="column"
                             alignItems="center"
-                            justifyContent="center">
+                            justifyContent="center"
+                        // border='1px solid black'
+                        >
                             <Typography variant="h5">Grouped Data</Typography>
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                // border: '1px solid black',
+                                width: '100%',
+                                p: 2,
+                                gap: 3
+                            }}>
+                                <Paper sx={{
+                                     display: "flex",
+                                     flexDirection: "row",
+                                     justifyContent: 'center',
+                                     alignItems: 'center',
+                                     p:2
+                                }}>
+                                 
+                                    <Typography variant="h7" mr={2}>Total Students : {totalStudents}   </Typography>
+                                    <Typography variant="h7" >Total Groups: {groups.length} </Typography>
+                                </Paper>
+                            </Box>
                             <Grid container spacing={2}>
                                 {groups.map((group, index) => (
                                     <Grid item xs={12} sm={6} md={4} key={index}>
-                                        <Box>
-                                            <Typography variant="h6">Group {index + 1}</Typography>
+                                        <Box sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}>
+                                            <Typography variant="h7" textAlign="center" p={1}>Group {index + 1}</Typography>
                                             {group.length > 0 ? (
                                                 <TableContainer component={Paper}>
                                                     <Table>
@@ -298,7 +331,7 @@ const Home = () => {
                                                         </TableBody>
                                                         <TableFooter>
                                                             <TableRow sx={{ backgroundColor: '#1976d2' }}>
-                                                                <TableCell colSpan={3} sx={{ textAlign: 'center', color:'#ffffff' }}>
+                                                                <TableCell colSpan={3} sx={{ textAlign: 'center', color: '#ffffff' }}>
                                                                     <Typography variant='h9'>Avg CGPA of this group: {calculateAverageCGPA(group).toFixed(2)}</Typography>
                                                                 </TableCell>
                                                             </TableRow>
@@ -323,9 +356,10 @@ const Home = () => {
                         </Box>
                     )}
                 </Box>
-            )}
+            )
+            }
             <Footer />
-        </Container>
+        </Container >
     );
 };
 
