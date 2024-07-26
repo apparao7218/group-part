@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db'); 
 const fs = require('fs');
 const path = require('path');
-
 const PORT = process.env.PORT || 3000;
 
 const app = express();
