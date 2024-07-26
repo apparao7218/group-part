@@ -32,7 +32,7 @@ const Home = () => {
     const [groupSizeError, setGroupSizeError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
-    const [count , setCount ] = useState(0);
+    const [count, setCount] = useState(0);
 
 
     useEffect(() => {
@@ -170,7 +170,7 @@ const Home = () => {
 
     const totalStudents = groups.reduce((sum, group) => sum + group.length, 0);
 
-    
+
     return (
         <Container
             disableGutters
@@ -289,13 +289,13 @@ const Home = () => {
                                 gap: 3
                             }}>
                                 <Paper sx={{
-                                     display: "flex",
-                                     flexDirection: "row",
-                                     justifyContent: 'center',
-                                     alignItems: 'center',
-                                     p:2
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    p: 2
                                 }}>
-                                 
+                                    <Typography variant="h7" mr={2}>Group Size : {groupSize}   </Typography>
                                     <Typography variant="h7" mr={2}>Total Students : {totalStudents}   </Typography>
                                     <Typography variant="h7" >Total Groups: {groups.length} </Typography>
                                 </Paper>
@@ -318,6 +318,8 @@ const Home = () => {
                                                                 <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>S.No</TableCell>
                                                                 <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Student Id</TableCell>
                                                                 <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Name</TableCell>
+                                                                {/* <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>CGPA</TableCell> */}
+
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
@@ -326,6 +328,8 @@ const Home = () => {
                                                                     <TableCell sx={{ textAlign: 'center' }}>{rowIndex + 1}</TableCell>
                                                                     <TableCell sx={{ textAlign: 'center' }}>{row.studentId}</TableCell>
                                                                     <TableCell sx={{ textAlign: 'center' }}>{row.name}</TableCell>
+                                                                    {/* <TableCell sx={{ textAlign: 'center' }}>{row.cgpa}</TableCell> */}
+
                                                                 </TableRow>
                                                             ))}
                                                         </TableBody>
