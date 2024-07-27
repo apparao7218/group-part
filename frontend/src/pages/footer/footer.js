@@ -20,13 +20,26 @@ const Footer = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: 1,
-                borderTop: `1px solid ${theme.palette.divider}`, // Optional border
+                borderTop: `1px solid ${theme.palette.divider}`,
             }}
         >
-            <Typography variant="h7">
+            <Typography
+                sx={{
+                    fontSize: {
+                        xs: '0.7rem',
+                        sm: '0.875rem',
+                        md: '1rem'
+                    }
+                }}>
                 Developed by Apparao Puchakayala
             </Typography>
-            <Typography variant="body2" sx={{ fontStyle: '' }}>
+            <Typography sx={{
+                fontSize: {
+                    xs: '0.7rem',
+                    sm: '0.875rem',
+                    md: '1rem'
+                }
+            }}>
                 CSE-Technician - SOT
             </Typography>
         </Box>

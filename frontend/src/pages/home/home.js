@@ -200,6 +200,7 @@ const Home = () => {
             sx={{
                 display: "flex",
                 flexDirection: "column",
+                justifyContent: 'center',
                 alignItems: "center",
                 height: "calc(100vh - 220px)",
                 width: "100%",
@@ -215,20 +216,51 @@ const Home = () => {
                 </Box>
             ) : (
                 !isFileUploaded && (
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        alignItems="center"
-                        justifyContent="center"
-                        width='100%'
+                    <Paper
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            // border: '1px solid black',
+                            width: {
+                                xs: '90%',
+                                sm: '70%',
+                                md: '55%',
+                                lg: '55%',
+                                xl: '50%'
+                            },
+                            height: {
+                                xs: 'auto',
+                                sm: '60%',
+                                md: '60%',
+                                lg: '60%',
+                                xl: '60%'
+                            },
+                            boxShadow: 4,
+                            padding: {
+                                xs: 2,
+                                sm: 2,
+                                md: 2,
+                                lg: 0,
+                                xl: 0
+                            },
+                            borderRadius: 1,
+                            // margin: 'auto'
+                        }}
+
                     >
                         <Box>
-                            <Typography variant="h5" component="h1" gutterBottom>
+                            <Typography variant="h5" component="h1" gutterBottom sx={{
+                                fontSize: { xs: '1rem', sm: '1.3rem', md: '1.6rem' }
+                            }}>
                                 Student Groups
                             </Typography>
                         </Box>
                         <Box>
-                            <Typography variant="h7" gutterBottom>
+                            <Typography gutterBottom sx={{
+                                fontSize: { xs: '0.7rem', sm: '0.93rem', md: '1.04rem' }
+                            }} >
                                 Upload Excel File
                             </Typography>
                         </Box>
@@ -244,7 +276,11 @@ const Home = () => {
                                 flexDirection="column"
                                 justifyContent='center'
                                 alignItems="stretch"
-                                sx={{ gap: 2, padding: 2, borderRadius: 1 }}
+                                sx={{
+                                    gap: 2, padding: 2,
+                                    borderRadius: 1,
+
+                                }}
                             >
                                 <TextField
                                     required
@@ -254,6 +290,10 @@ const Home = () => {
                                     variant="outlined"
                                     error={!!fileError}
                                     helperText={fileError}
+                                    sx={{
+                                        '& .MuiInputLabel-root':
+                                            { fontSize: { xs: '0.3rem', sm: '0.875rem', md: '1rem' } }
+                                    }}
                                 />
                                 <TextField
                                     label="Enter the group size"
@@ -265,6 +305,7 @@ const Home = () => {
                                     error={!!groupSizeError}
                                     helperText={groupSizeError}
                                     fullWidth
+                                    sx={{ '& .MuiInputLabel-root': { fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' } } }}
                                 />
                                 <Button
                                     variant="contained"
@@ -272,6 +313,7 @@ const Home = () => {
                                     startIcon={<UploadFileIcon />}
                                     onClick={handleUpload}
                                     fullWidth
+                                    sx={{ fontSize: { xs: '0.65rem', sm: '0.875rem', md: '1rem' }, padding: '8px 16px' }}
                                 >
                                     Upload
                                 </Button>
@@ -280,13 +322,29 @@ const Home = () => {
                                     color="secondary"
                                     onClick={downloadTemplate}
                                     fullWidth
+                                    sx={{ fontSize: { xs: '0.65rem', sm: '0.875rem', md: '1rem' }, padding: '8px 16px' }}
                                 >
                                     Download Template
                                 </Button>
                             </Box>
-                            <Typography variant='h7' color='tomato'>Download the Template first and insert the student data and upload..</Typography>
+                            <Typography
+                                variant='h7'
+                                color='error'
+                                sx={{
+                                    // border:'1px solid black',
+                                    textAlign:'center',
+                                    fontSize:
+                                    {
+                                        xs: '0.8rem',
+                                        sm: '0.875rem',
+                                        md: '1rem'
+                                    },
+                                    padding: '4px 8px'
+                                }}
+                            >
+                                Download the Template first and insert the student data and upload..</Typography>
                         </Box>
-                    </Box>
+                    </Paper>
                 )
             )}
             {isFileUploaded && (
@@ -299,7 +357,7 @@ const Home = () => {
                         height: '100%',
                         width: '100%',
                         overflowY: 'auto',
-                        overflowX:'hidden',
+                        overflowX: 'hidden',
                         p: 1
                     }}
                 >
@@ -371,10 +429,10 @@ const Home = () => {
                                                             height: '50px',
                                                         },
                                                         '& .MuiInputLabel-root': {
-                                                            fontSize: '12px', 
+                                                            fontSize: '12px',
                                                         },
                                                         '& .MuiFormHelperText-root': {
-                                                            fontSize: '10px', 
+                                                            fontSize: '10px',
                                                         },
                                                     }}
                                                 />
