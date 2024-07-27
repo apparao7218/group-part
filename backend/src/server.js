@@ -26,7 +26,7 @@ app.use(express.json());
 // Connect to MongoDB
 connectDB()
   .then(() => {
-    console.log('MongoDB connected');
+    console.log('MongoDB connected from server');
   })
   .catch(err => console.error('MongoDB connection error:', err.message));
 

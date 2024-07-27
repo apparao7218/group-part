@@ -40,6 +40,10 @@ router.post('/', async (req, res) => {
             cgpa: parseFloat(row.columns.get('column4')) 
         }));
 
+        if (validRows.length === 0) {
+            return res.status(400).send('Oops, it looks like your sheet doesn’t have any valid data.');
+        }
+        
         // Sort rows by CGPA in descending order
         validRows.sort((a, b) => b.cgpa - a.cgpa);
 

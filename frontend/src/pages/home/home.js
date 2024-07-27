@@ -299,6 +299,7 @@ const Home = () => {
                         height: '100%',
                         width: '100%',
                         overflowY: 'auto',
+                        overflowX:'hidden',
                         p: 1
                     }}
                 >
@@ -351,7 +352,7 @@ const Home = () => {
                                             sx={{ gap: 1, width: '100%' }}
                                         >
                                             <Box display="flex"
-                                                flexDirection="row"
+                                                flexDirection={{ xs: 'column', sm: 'row' }}
                                                 justifyContent='center'
                                                 alignItems="center"
                                                 // border="1px solid black"
@@ -424,7 +425,7 @@ const Home = () => {
                                                                 <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>S.No</TableCell>
                                                                 <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Student Id</TableCell>
                                                                 <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>Name</TableCell>
-                                                                {/* <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>CGPA</TableCell> */}
+                                                                <TableCell sx={{ color: '#ffffff', textAlign: 'center' }}>CGPA</TableCell>
 
                                                             </TableRow>
                                                         </TableHead>
@@ -434,14 +435,14 @@ const Home = () => {
                                                                     <TableCell sx={{ textAlign: 'center' }}>{rowIndex + 1}</TableCell>
                                                                     <TableCell sx={{ textAlign: 'center' }}>{row.studentId}</TableCell>
                                                                     <TableCell sx={{ textAlign: 'center' }}>{row.name}</TableCell>
-                                                                    {/* <TableCell sx={{ textAlign: 'center' }}>{row.cgpa}</TableCell> */}
+                                                                    <TableCell sx={{ textAlign: 'center' }}>{row.cgpa}</TableCell>
 
                                                                 </TableRow>
                                                             ))}
                                                         </TableBody>
                                                         <TableFooter>
                                                             <TableRow sx={{ backgroundColor: '#1976d2' }}>
-                                                                <TableCell colSpan={3} sx={{ textAlign: 'center', color: '#ffffff' }}>
+                                                                <TableCell colSpan={4} sx={{ textAlign: 'center', color: '#ffffff' }}>
                                                                     <Typography variant='h9'>Avg CGPA of this group: {calculateAverageCGPA(group).toFixed(2)}</Typography>
                                                                 </TableCell>
                                                             </TableRow>
