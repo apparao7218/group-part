@@ -332,7 +332,7 @@ const Home = () => {
                                 color='error'
                                 sx={{
                                     // border:'1px solid black',
-                                    textAlign:'center',
+                                    textAlign: 'center',
                                     fontSize:
                                     {
                                         xs: '0.8rem',
@@ -362,13 +362,18 @@ const Home = () => {
                     }}
                 >
                     {groups.length > 0 && (
-                        <Box mt={4} width="100%" display="flex"
+                        <Box mt={0} width="100%" display="flex"
                             flexDirection="column"
                             alignItems="center"
                             justifyContent="center"
                         // border='1px solid black'
                         >
-                            <Typography variant="h5">Grouped Data</Typography>
+                            <Typography variant="h5"
+                                sx={{
+                                    fontSize: { xs: '1rem', sm: '1.2rem', md: '1.4rem' }
+                                }}>
+                                Grouped Data
+                            </Typography>
                             <Box sx={{
                                 display: "flex",
                                 flexDirection: "row",
@@ -384,7 +389,7 @@ const Home = () => {
                                     flexDirection: "column",
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    p: 2,
+                                    p: 0.5,
                                 }}
                                     onMouseEnter={() => setIsHovered(true)}
                                     onMouseLeave={() => setIsHovered(false)}
@@ -396,9 +401,30 @@ const Home = () => {
                                         alignItems: 'center',
                                         p: 2,
                                     }}>
-                                        <Typography variant="h7" mr={2}>Group Size : {groupSize}   </Typography>
-                                        <Typography variant="h7" mr={2}>Total Students : {totalStudents}   </Typography>
-                                        <Typography variant="h7" >Total Groups: {groups.length} </Typography>
+                                        <Typography
+                                            sx={{
+                                                mr: 2,
+                                                fontSize: { xs: '0.7rem', sm: '0.93rem', md: '1.04rem' }
+                                            }}
+                                        >
+                                            Group Size : {groupSize}
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                mr: 2,
+                                                fontSize: { xs: '0.7rem', sm: '0.93rem', md: '1.04rem' }
+                                            }}
+                                        >
+                                            Total Students : {totalStudents}
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                mr: 2,
+                                                fontSize: { xs: '0.7rem', sm: '0.93rem', md: '1.04rem' }
+                                            }}
+                                        >
+                                            Total Groups: {groups.length}
+                                        </Typography>
                                     </Box>
                                     {isHovered ? (
                                         <Box
