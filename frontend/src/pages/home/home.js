@@ -32,7 +32,7 @@ const Home = () => {
     const [groupSizeError, setGroupSizeError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
-    const [count, setCount] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
 
 
     useEffect(() => {
@@ -112,11 +112,21 @@ const Home = () => {
         doc.text('Groups', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
 
         let yOffset = 30;
-
+        const pageHeight = doc.internal.pageSize.getHeight();
         const headers = ['S.NO', 'STUDENT ID', 'STUDNAME'];
+        const groupInfoHeight = 20; // Height for group title and average CGPA text
 
         groups.forEach((group, index) => {
             const avgCgpa = (group.reduce((sum, member) => sum + member.cgpa, 0) / group.length).toFixed(2);
+
+            let sequentialNumber = 1;
+            const data = group.map(member => [sequentialNumber++, member.studentId, member.name]);
+            const tableHeight = data.length * 10 + 20; // Estimate the height of the table
+
+            if (yOffset + groupInfoHeight + tableHeight > pageHeight) {
+                doc.addPage();
+                yOffset = 30;
+            }
 
             doc.setFontSize(14);
             doc.text(`Group ${index + 1}`, 14, yOffset);
@@ -126,9 +136,6 @@ const Home = () => {
             doc.text(`Avg CGPA of this group: ${avgCgpa}`, 14, yOffset);
             yOffset += 10;
 
-            let sequentialNumber = 1;
-
-            const data = group.map(member => [sequentialNumber++, member.studentId, member.name]);
             const columnStyles = {
                 0: { halign: 'center' },
                 1: { halign: 'center' },
@@ -315,14 +322,88 @@ const Home = () => {
                             }}>
                                 <Paper sx={{
                                     display: "flex",
-                                    flexDirection: "row",
+                                    flexDirection: "column",
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    p: 2
-                                }}>
-                                    <Typography variant="h7" mr={2}>Group Size : {groupSize}   </Typography>
-                                    <Typography variant="h7" mr={2}>Total Students : {totalStudents}   </Typography>
-                                    <Typography variant="h7" >Total Groups: {groups.length} </Typography>
+                                    p: 2,
+                                }}
+                                    onMouseEnter={() => setIsHovered(true)}
+                                    onMouseLeave={() => setIsHovered(false)}
+                                >
+                                    <Box sx={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        p: 2,
+                                    }}>
+                                        <Typography variant="h7" mr={2}>Group Size : {groupSize}   </Typography>
+                                        <Typography variant="h7" mr={2}>Total Students : {totalStudents}   </Typography>
+                                        <Typography variant="h7" >Total Groups: {groups.length} </Typography>
+                                    </Box>
+                                    {isHovered ? (
+                                        <Box
+                                            display="flex"
+                                            flexDirection="column"
+                                            justifyContent='center'
+                                            alignItems="center"
+                                            // border="1px solid black"
+                                            sx={{ gap: 1, width: '100%' }}
+                                        >
+                                            <Box display="flex"
+                                                flexDirection="row"
+                                                justifyContent='center'
+                                                alignItems="center"
+                                                // border="1px solid black"
+                                                sx={{ gap: 2, borderRadius: 1, height: 'auto', width: '100%' }}>
+                                                <TextField
+                                                    label="Enter the group size"
+                                                    type="number"
+                                                    value={groupSize}
+                                                    onChange={handleGroupSizeChange}
+                                                    variant="outlined"
+                                                    inputProps={{ min: 1 }}
+                                                    error={!!groupSizeError}
+                                                    helperText={groupSizeError}
+                                                    sx={{
+                                                        '& .MuiInputBase-root': {
+                                                            height: '50px',
+                                                        },
+                                                        '& .MuiInputLabel-root': {
+                                                            fontSize: '12px', 
+                                                        },
+                                                        '& .MuiFormHelperText-root': {
+                                                            fontSize: '10px', 
+                                                        },
+                                                    }}
+                                                />
+
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    startIcon={<UploadFileIcon />}
+                                                    onClick={handleUpload}
+                                                // fullWidth
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </Box>
+                                            <Box display="flex"
+                                                flexDirection="column"
+                                                justifyContent='center'
+                                                alignItems="center"
+                                                // border="1px solid black"
+                                                sx={{ borderRadius: 1, height: 'auto', width: '100%' }}>
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={downloadPDF}
+                                                    sx={{}}
+                                                >
+                                                    Download PDF
+                                                </Button>
+                                            </Box>
+                                        </Box>) : ''}
                                 </Paper>
                             </Box>
                             <Grid container spacing={2}>
