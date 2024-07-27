@@ -237,7 +237,7 @@ const Home = () => {
                                 lg: '60%',
                                 xl: '60%'
                             },
-                            boxShadow: 4,
+                            boxShadow: 2,
                             padding: {
                                 xs: 2,
                                 sm: 2,
@@ -245,7 +245,9 @@ const Home = () => {
                                 lg: 0,
                                 xl: 0
                             },
-                            borderRadius: 1,
+                            borderTopLeftRadius: '35px',
+                            borderBottomRightRadius: '35px', 
+                           
                             // margin: 'auto'
                         }}
 
